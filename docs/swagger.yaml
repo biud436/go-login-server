@@ -1,0 +1,136 @@
+basePath: /v1
+definitions:
+  common.Response:
+    properties:
+      code:
+        type: string
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.LoginInput:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  dto.RegisterInput:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: biud436@gmail.com
+    name: API 지원
+    url: https://github.com/biud436
+  description: 이 API는 Go 기반 로그인 시스템을 위한 샘플 서버입니다.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Go 로그인 서버 API
+  version: "1.0"
+paths:
+  /v1/login:
+    post:
+      consumes:
+      - application/json
+      description: 사용자 이름과 비밀번호를 사용하여 로그인을 수행합니다.
+      parameters:
+      - description: 로그인 입력 정보
+        in: body
+        name: loginInput
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 로그인이 성공적으로 완료되었습니다.
+          schema:
+            $ref: '#/definitions/common.Response'
+        "400":
+          description: 잘못된 입력
+          schema:
+            $ref: '#/definitions/common.Response'
+        "401":
+          description: 잘못된 사용자 이름 또는 비밀번호
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: 서버 내부 오류
+          schema:
+            $ref: '#/definitions/common.Response'
+      summary: 사용자를 로그인합니다.
+      tags:
+      - auth
+  /v1/protected/dashboard:
+    get:
+      consumes:
+      - application/json
+      description: 인증된 사용자의 대시보드를 가져옵니다
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.Response'
+      security:
+      - BearerAuth: []
+      summary: 사용자 대시보드 가져오기
+      tags:
+      - protected
+  /v1/register:
+    post:
+      consumes:
+      - application/json
+      description: 사용자 이름과 비밀번호를 사용하여 새로운 사용자를 등록합니다.
+      parameters:
+      - description: 회원가입 입력 정보
+        in: body
+        name: registerInput
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 성공적으로 등록되었습니다.
+          schema:
+            $ref: '#/definitions/common.Response'
+        "400":
+          description: 잘못된 입력 또는 이미 존재하는 사용자 이름
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: 서버 내부 오류
+          schema:
+            $ref: '#/definitions/common.Response'
+      summary: 새로운 사용자를 등록합니다.
+      tags:
+      - auth
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

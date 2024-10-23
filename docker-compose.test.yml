@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  db_test:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test123!
+      POSTGRES_DB: sso_test
+    ports:
+      - "5433:5432" # 호스트 포트를 5433으로 변경
+    volumes:
+      - db-data-test:/var/lib/postgresql/data
+
+volumes:
+  db-data-test:
