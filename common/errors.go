@@ -23,16 +23,56 @@ func (e *AppError) Error() string {
 
 // 공통 에러 변수 정의
 var (
-    ErrUsernameExists       = &AppError{Code: "USERNAME_EXISTS", Message: "Username already exists", StatusCode: http.StatusBadRequest}
-    ErrInvalidCredentials   = &AppError{Code: "INVALID_CREDENTIALS", Message: "Invalid username or password", StatusCode: http.StatusUnauthorized}
-    ErrAuthorizationHeader = &AppError{Code: "AUTH_HEADER_MISSING", Message: "Authorization header missing", StatusCode: http.StatusUnauthorized}
-    ErrInvalidAuthHeader    = &AppError{Code: "INVALID_AUTH_HEADER", Message: "Invalid authorization header", StatusCode: http.StatusUnauthorized}
-    ErrInvalidToken         = &AppError{Code: "INVALID_TOKEN", Message: "Invalid token", StatusCode: http.StatusUnauthorized}
-    ErrJWTSecretNotSet      = &AppError{Code: "JWT_SECRET_NOT_SET", Message: "JWT_SECRET not set in environment variables", StatusCode: http.StatusInternalServerError}
-    ErrHashingPassword      = &AppError{Code: "HASHING_PASSWORD", Message: "Error hashing password", StatusCode: http.StatusInternalServerError}
-    ErrGeneratingToken      = &AppError{Code: "GENERATING_TOKEN", Message: "Could not generate token", StatusCode: http.StatusInternalServerError}
-    ErrPasswordLength       = &AppError{Code: "PASSWORD_LENGTH", Message: "Password must be at least 8 characters long", StatusCode: http.StatusBadRequest}
-    ErrInvalidInput         = &AppError{Code: "INVALID_INPUT", Message: "Invalid input", StatusCode: http.StatusBadRequest}
+    ErrUsernameExists = &AppError{
+        Code:       "USERNAME_EXISTS",
+        Message:    "이미 존재하는 사용자 이름입니다.",
+        StatusCode: http.StatusBadRequest,
+    }
+    ErrInvalidCredentials = &AppError{
+        Code:       "INVALID_CREDENTIALS",
+        Message:    "잘못된 사용자 이름 또는 비밀번호입니다.",
+        StatusCode: http.StatusUnauthorized,
+    }
+    ErrAuthorizationHeader = &AppError{
+        Code:       "AUTHORIZATION_HEADER_MISSING",
+        Message:    "Authorization 헤더가 없습니다.",
+        StatusCode: http.StatusUnauthorized,
+    }
+    ErrInvalidAuthHeader    = &AppError{
+        Code: "INVALID_AUTH_HEADER", 
+        Message: "Invalid authorization header", 
+        StatusCode: http.StatusUnauthorized,
+    }
+    ErrInvalidToken = &AppError{
+        Code:       "INVALID_TOKEN",
+        Message:    "유효하지 않은 JWT 토큰입니다.",
+        StatusCode: http.StatusUnauthorized,
+    }
+    ErrJWTSecretNotSet = &AppError{
+        Code: "JWT_SECRET_NOT_SET", 
+        Message: "JWT_SECRET not set in environment variables", 
+        StatusCode: http.StatusInternalServerError,
+    }
+    ErrHashingPassword = &AppError{
+        Code: "HASHING_PASSWORD", 
+        Message: "Error hashing password", 
+        StatusCode: http.StatusInternalServerError,
+    }
+    ErrGeneratingToken = &AppError{
+        Code: "GENERATING_TOKEN", 
+        Message: "Could not generate token", 
+        StatusCode: http.StatusInternalServerError,
+    }
+    ErrPasswordLength = &AppError{
+        Code: "PASSWORD_LENGTH", 
+        Message: "Password must be at least 8 characters long", 
+        StatusCode: http.StatusBadRequest,
+    }
+    ErrInvalidInput = &AppError{
+        Code: "INVALID_INPUT", 
+        Message: "Invalid input", 
+        StatusCode: http.StatusBadRequest,
+    }
 )
 
 // RespondWithError 함수 정의

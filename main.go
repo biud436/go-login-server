@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -69,9 +70,12 @@ func main() {
         log.Fatal("Failed to migrate database:", err)
     }
 
-    // validator 설정
-    validate := validator.New()
-    validators.RegisterCustomValidators(validate)
+    // Gin의 기존 Validator 엔진 가져오기
+    if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+        validators.RegisterCustomValidators(v)
+    } else {
+        log.Fatal("Validator 엔진을 가져오지 못했습니다.")
+    }
 
     // 라우트 설정 및 서버 시작
     router := routes.SetupRoutes(db)
