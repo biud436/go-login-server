@@ -18,7 +18,7 @@ import (
 // @Produce json
 // @Success 200 {object} common.Response
 // @Failure 500 {object} common.Response
-// @Router /v1/protected/dashboard [get]
+// @Router /protected/dashboard [get]
 func GetDashboard(c *gin.Context) {
     username, exists := c.Get("username")
     if !exists {
