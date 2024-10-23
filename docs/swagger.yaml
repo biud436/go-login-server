@@ -46,7 +46,7 @@ info:
   title: Go 로그인 서버 API
   version: "1.0"
 paths:
-  /v1/login:
+  /login:
     post:
       consumes:
       - application/json
@@ -80,28 +80,7 @@ paths:
       summary: 사용자를 로그인합니다.
       tags:
       - auth
-  /v1/protected/dashboard:
-    get:
-      consumes:
-      - application/json
-      description: 인증된 사용자의 대시보드를 가져옵니다
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/common.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/common.Response'
-      security:
-      - BearerAuth: []
-      summary: 사용자 대시보드 가져오기
-      tags:
-      - protected
-  /v1/register:
+  /register:
     post:
       consumes:
       - application/json
@@ -131,6 +110,27 @@ paths:
       summary: 새로운 사용자를 등록합니다.
       tags:
       - auth
+  /v1/protected/dashboard:
+    get:
+      consumes:
+      - application/json
+      description: 인증된 사용자의 대시보드를 가져옵니다
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.Response'
+      security:
+      - BearerAuth: []
+      summary: 사용자 대시보드 가져오기
+      tags:
+      - protected
 securityDefinitions:
   BearerAuth:
     in: header

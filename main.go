@@ -71,6 +71,7 @@ func main() {
     }
 
     // Gin의 기존 Validator 엔진 가져오기
+    // https://gin-gonic.com/docs/examples/custom-validators/
     if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
         validators.RegisterCustomValidators(v)
     } else {

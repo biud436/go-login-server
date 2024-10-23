@@ -24,12 +24,16 @@ import (
 // @Success 200 {object} common.Response "성공적으로 등록되었습니다."
 // @Failure 400 {object} common.Response "잘못된 입력 또는 이미 존재하는 사용자 이름"
 // @Failure 500 {object} common.Response "서버 내부 오류"
-// @Router /v1/register [post]
+// @Router /register [post]
 func Register(db *gorm.DB) gin.HandlerFunc {
     return func(c *gin.Context) {
         var input dto.RegisterInput
         if err := c.ShouldBindJSON(&input); err != nil {
-            common.ErrorResponse(c, err)
+            common.ErrorResponse(c, &common.AppError{
+                Code:       "VALIDATION_ERROR",
+                Message:    "입력값이 유효하지 않습니다.",
+                StatusCode: http.StatusBadRequest,
+            })
             return
         }
 
@@ -75,7 +79,7 @@ func Register(db *gorm.DB) gin.HandlerFunc {
 // @Failure 400 {object} common.Response "잘못된 입력"
 // @Failure 401 {object} common.Response "잘못된 사용자 이름 또는 비밀번호"
 // @Failure 500 {object} common.Response "서버 내부 오류"
-// @Router /v1/login [post]
+// @Router /login [post]
 func Login(db *gorm.DB) gin.HandlerFunc {
     return func(c *gin.Context) {
         var input dto.LoginInput

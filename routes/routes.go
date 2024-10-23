@@ -30,7 +30,7 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
     // Swagger 라우트 설정
     router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-    // API 버전 그룹화 (예: /v1)
+    // API 버전 그룹 설정
     v1 := router.Group("/v1")
     {
         // /v1/register 라우트 설정
