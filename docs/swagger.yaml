@@ -23,8 +23,11 @@ definitions:
   dto.RegisterInput:
     properties:
       password:
+        minLength: 8
         type: string
       username:
+        maxLength: 50
+        minLength: 3
         type: string
     required:
     - password

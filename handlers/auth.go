@@ -84,6 +84,16 @@ func Login(db *gorm.DB) gin.HandlerFunc {
             return
         }
 
+        // class-validator 같은 놈 없나?
+        if len(input.Username) < 3 || len(input.Username) > 16 {
+            common.ErrorResponse(c, &common.AppError{
+                Code:       "INVALID_USERNAME_LENGTH",
+                Message:    "사용자 이름은 3자 이상 16자 이하이어야 합니다.",
+                StatusCode: http.StatusBadRequest,
+            })
+            return
+        }        
+
         var user models.User
         if err := db.Where("username = ?", input.Username).First(&user).Error; err != nil {
             common.ErrorResponse(c, common.ErrInvalidCredentials)

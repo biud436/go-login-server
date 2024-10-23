@@ -5,10 +5,12 @@ import (
 	"go-login-server/common"
 	"go-login-server/models"
 	"go-login-server/routes"
+	"go-login-server/validators"
 
 	"log"
 	"os"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -66,6 +68,10 @@ func main() {
         common.ErrorResponse(nil, err) // main.go에서는 gin.Context가 없으므로 별도의 에러 처리 필요
         log.Fatal("Failed to migrate database:", err)
     }
+
+    // validator 설정
+    validate := validator.New()
+    validators.RegisterCustomValidators(validate)
 
     // 라우트 설정 및 서버 시작
     router := routes.SetupRoutes(db)
