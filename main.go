@@ -5,14 +5,10 @@ import (
 	"go-login-server/common"
 	"go-login-server/models"
 	"go-login-server/modules"
-	"go-login-server/routes"
-	"go-login-server/validators"
 
 	"log"
 	"os"
 
-	"github.com/gin-gonic/gin/binding"
-	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"go.uber.org/dig"
 	"gorm.io/driver/postgres"
@@ -44,51 +40,12 @@ func main() {
     container.Provide(modules.NewConfigService)
     container.Provide(modules.NewRedisService)
     container.Provide(initDB)
-    container.Provide(newAppService)
+    container.Provide(modules.NewAppService)
 
-    container.Invoke(func(appService *AppService, redisService *modules.RedisService) {
-        appService.onModuleStart(redisService)
-        appService.startServer()
+    container.Invoke(func(appService *modules.AppService, redisService *modules.RedisService) {
+        appService.OnModuleStart(redisService)
+        appService.StartServer()
     })
-}
-
-type AppService struct {
-	DB *gorm.DB
-}
-
-func newAppService(db *gorm.DB) *AppService {
-    return &AppService{
-        DB: db,
-    }
-}
- 
-func (as *AppService) startServer() {
-
-    // Gin의 기존 Validator 엔진 가져오기
-    // https://gin-gonic.com/docs/examples/custom-validators/
-    if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-        validators.RegisterCustomValidators(v)
-    } else {
-        log.Fatal("Validator 엔진을 가져오지 못했습니다.")
-    }
-
-    // 라우트 설정 및 서버 시작
-    router := routes.SetupRoutes(as.DB)
-
-    port := os.Getenv("PORT")
-    if port == "" {
-        port = "8080"
-    }
-
-    if err := router.Run(":" + port); err != nil {
-        log.Fatal("Failed to run server:", err)
-    }
-}
-
-func (as *AppService) onModuleStart(redisService *modules.RedisService) {
-    redisService.Init();
-
-    log.Println("Redis Service Initialized")
 }
 
 func initDB() (*gorm.DB, error) {
