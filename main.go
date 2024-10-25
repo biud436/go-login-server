@@ -41,6 +41,7 @@ func main() {
     log.Println("Dependency Injection Container Initializing...")
     container := dig.New()
 
+    container.Provide(modules.NewConfigService)
     container.Provide(modules.NewRedisService)
     container.Provide(newAppService)
 

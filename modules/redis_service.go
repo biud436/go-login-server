@@ -21,21 +21,24 @@ var (
 type RedisService struct {
 	Client *redis.Client
 	Context context.Context
+	configService *ConfigService
 }
 
 /**
  * RedisService 생성자 함수	
  */
-func NewRedisService() *RedisService {
+func NewRedisService(configService *ConfigService) *RedisService {
 	return &RedisService{
 		Client: redisClient,
 		Context: redisContext,
+		configService: configService,
 	}
 }
 
 func (rs *RedisService) Init() {
+	
 	rs.Client = redis.NewClient(&redis.Options{
-		Addr: getEnv("REDIS_HOST", "localhost") + ":" + getEnv("REDIS_PORT", "6379"),
+		Addr: rs.configService.getEnv("REDIS_HOST", "localhost") + ":" + rs.configService.getEnv("REDIS_PORT", "6379"),
 	})
 
 	_, err := rs.Client.Ping(rs.Context).Result()
