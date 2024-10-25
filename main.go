@@ -4,6 +4,7 @@ package main
 import (
 	"go-login-server/common"
 	"go-login-server/models"
+	"go-login-server/modules"
 	"go-login-server/routes"
 	"go-login-server/validators"
 
@@ -40,6 +41,9 @@ func main() {
     if err != nil {
         log.Println("No .env file found")
     }
+
+    // Redis 초기화
+    modules.InitRedis()
 
     // 환경 변수에서 DB 정보 로드
     dbHost := os.Getenv("DB_HOST")
