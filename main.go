@@ -43,6 +43,7 @@ func main() {
 
     container.Provide(modules.NewConfigService)
     container.Provide(modules.NewRedisService)
+    container.Provide(initDB)
     container.Provide(newAppService)
 
     container.Invoke(func(appService *AppService, redisService *modules.RedisService) {
@@ -52,15 +53,45 @@ func main() {
 }
 
 type AppService struct {
-	
+	DB *gorm.DB
 }
 
-func newAppService() *AppService {
-    return &AppService{}
+func newAppService(db *gorm.DB) *AppService {
+    return &AppService{
+        DB: db,
+    }
 }
  
-
 func (as *AppService) startServer() {
+
+    // Gin의 기존 Validator 엔진 가져오기
+    // https://gin-gonic.com/docs/examples/custom-validators/
+    if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+        validators.RegisterCustomValidators(v)
+    } else {
+        log.Fatal("Validator 엔진을 가져오지 못했습니다.")
+    }
+
+    // 라우트 설정 및 서버 시작
+    router := routes.SetupRoutes(as.DB)
+
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+
+    if err := router.Run(":" + port); err != nil {
+        log.Fatal("Failed to run server:", err)
+    }
+}
+
+func (as *AppService) onModuleStart(redisService *modules.RedisService) {
+    redisService.Init();
+
+    log.Println("Redis Service Initialized")
+}
+
+func initDB() (*gorm.DB, error) {
     // .env 파일 로드
     err := godotenv.Load()
     if err != nil {
@@ -96,29 +127,5 @@ func (as *AppService) startServer() {
         log.Fatal("Failed to migrate database:", err)
     }
 
-    // Gin의 기존 Validator 엔진 가져오기
-    // https://gin-gonic.com/docs/examples/custom-validators/
-    if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-        validators.RegisterCustomValidators(v)
-    } else {
-        log.Fatal("Validator 엔진을 가져오지 못했습니다.")
-    }
-
-    // 라우트 설정 및 서버 시작
-    router := routes.SetupRoutes(db)
-
-    port := os.Getenv("PORT")
-    if port == "" {
-        port = "8080"
-    }
-
-    if err := router.Run(":" + port); err != nil {
-        log.Fatal("Failed to run server:", err)
-    }
-}
-
-func (as *AppService) onModuleStart(redisService *modules.RedisService) {
-    redisService.Init();
-
-    log.Println("Redis Service Initialized")
+    return db, err
 }
