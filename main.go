@@ -14,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
+	"go.uber.org/dig"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -36,14 +37,34 @@ import (
 // @in header
 // @name Authorization
 func main() {
+
+    log.Println("Dependency Injection Container Initializing...")
+    container := dig.New()
+
+    container.Provide(modules.NewRedisService)
+    container.Provide(newAppService)
+
+    container.Invoke(func(appService *AppService, redisService *modules.RedisService) {
+        appService.onModuleStart(redisService)
+        appService.startServer()
+    })
+}
+
+type AppService struct {
+	
+}
+
+func newAppService() *AppService {
+    return &AppService{}
+}
+ 
+
+func (as *AppService) startServer() {
     // .env 파일 로드
     err := godotenv.Load()
     if err != nil {
         log.Println("No .env file found")
     }
-
-    // Redis 초기화
-    modules.InitRedis()
 
     // 환경 변수에서 DB 정보 로드
     dbHost := os.Getenv("DB_HOST")
@@ -93,4 +114,10 @@ func main() {
     if err := router.Run(":" + port); err != nil {
         log.Fatal("Failed to run server:", err)
     }
+}
+
+func (as *AppService) onModuleStart(redisService *modules.RedisService) {
+    redisService.Init();
+
+    log.Println("Redis Service Initialized")
 }
